@@ -21,18 +21,21 @@ DATABASE.execute("CREATE TABLE IF NOT EXISTS products (id INTEGER PRIMARY KEY, n
                                                        serial_num INTEGER, category_id INTEGER, location_id INTEGER, FOREIGN KEY(category_id) REFERENCES categories(id),
                                                        FOREIGN KEY(location_id) REFERENCES locations(id))")
                                                        
-              
-              
-                                                       # DATABASE.execute("CREATE TABLE IF NOT EXISTS products (id INTEGER PRIMARY KEY, name TEXT,
-#                                                                                                               quantity INTEGER CHECK(quantity >= 0), description TEXT DEFAULT(null),
-#                                                                                                               serial_num INTEGER CHECK(serial_num >= 0), category_id INTEGER, location_id INTEGER, FOREIGN KEY(category_id) REFERENCES categories(id),
-#                                                                                                               FOREIGN KEY(location_id) REFERENCES locations(id))")
-#
-                                      
+# ----------------------------------------------------------------------------------------------
 
-# lollipop = Product.new({name: "Lollipop", quantity: 532, description: "You can suck it.", serial_num: 145})
-# your_moms_basement = Location.new({name: "Your Moms Basement", description: "Full of rats"})
-# new_category = Category.new({name: "breakfast", description: "food to rot your stomach lining"})
+# ^ ALL THIS WORKS BEAUTIFULLY. HERE'S STUFF WE'D LIKE TO ADD ONCE WE HAVE EVERYTHING REQUIRED WORKING PROPERLY:
+
+# 1. CREATE ACTIVE/INACTIVE AS A FIELD IN PRODUCTS, LOCATIONS, CATEGORIES? WOULD HAVE TO UPDATE SELF.ALL METHODS TO ONLY SHOW ACTIVE 
+# (AND ONLY SHOW INACTIVE) AS WELL AS INSERT AND SAVE. 
+               
+# 
+# 2.           --------Maybe something like this can replace the one above?-----------------
+#
+# DATABASE.execute("CREATE TABLE IF NOT EXISTS products (id INTEGER PRIMARY KEY, name TEXT,
+# quantity INTEGER CHECK(quantity >= 0), description TEXT DEFAULT(null),
+# serial_num INTEGER CHECK(serial_num >= 0), category_id INTEGER, location_id INTEGER,
+# FOREIGN KEY(category_id) REFERENCES categories(id), FOREIGN KEY(location_id) REFERENCES locations(id))")
+
 
 
 binding.pry
