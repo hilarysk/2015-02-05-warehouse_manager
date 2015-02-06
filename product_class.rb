@@ -1,4 +1,5 @@
 require_relative "module.rb"
+require_relative 'class_module.rb'
 
 # Class: Product
 #
@@ -10,6 +11,7 @@ require_relative "module.rb"
 # @quantity      - Integer: Number of products in inventory
 # @description   - String: Description of product (duh)
 # @serial_number - Integer: Unique identifier for particular product
+# @cost          - Integer: Number of cents product costs
 #
 # attr_reader :id
 # attr_accessor :serial_num, :description, :quantity, :name
@@ -17,7 +19,6 @@ require_relative "module.rb"
 # Public Methods:
 # #move_self_between_locations -- instance method
 # #select_all_products_for_location
-# #delete_product
 # #return_category
 # #return_location
 # 
@@ -25,11 +26,12 @@ require_relative "module.rb"
 # #initialize
 
 class Product
-  include WarehouseManager
+  include WarehouseManagerIM
+  extend WarehouseManagerCM
 
   
   attr_reader :id
-  attr_accessor :serial_num, :description, :quantity, :name
+  attr_accessor :serial_num, :description, :quantity, :name, :cost
 
   # Private: initialize
   # Starts and then plays the game with the provided players.
@@ -41,6 +43,7 @@ class Product
   #           - @description - Instance variable representing the product info 
   #           - @serial_num  - Instance variable representing the product serial number
   #           - @id          - Instance variable representing the product ID within the table (primary key)
+  #           - @cost        - Instance variable representing cost of product in cents
   #
   # Returns:
   # Nil
@@ -54,6 +57,7 @@ class Product
     @description = options["description"]
     @serial_num = options["serial_num"]
     @id = options["id"]
+    @cost = options["cost"]
   end
   
 

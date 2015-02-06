@@ -1,4 +1,5 @@
 require_relative 'module.rb'
+require_relative 'class_module.rb'
 
 
 # Class: Category
@@ -17,12 +18,13 @@ require_relative 'module.rb'
 # #self.select_all_categories
 # #select_products_for_category
 # #add_product_to_category
-# #delete_category
 # 
 # Private Methods:
 # #initialize
 
 class Category
+  include WarehouseManagerIM
+  extend WarehouseManagerCM
 
   attr_reader :id
   attr_accessor :description, :name

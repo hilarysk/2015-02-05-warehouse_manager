@@ -1,5 +1,5 @@
 require_relative 'module.rb'
-
+require_relative 'class_module.rb'
 
 # Class: Location
 #
@@ -15,12 +15,13 @@ require_relative 'module.rb'
 #
 # Public Methods:
 # #self.select_all_locations
-# #delete_location
 # 
 # Private Methods:
 # #initialize
 
 class Location
+  include WarehouseManagerIM
+  extend WarehouseManagerCM
   
   attr_reader :id
   attr_accessor :description, :name

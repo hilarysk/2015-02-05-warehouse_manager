@@ -1,32 +1,30 @@
 require "pry"
 
-# Module: WarehouseManager
+# Module: WarehouseManagerIM
 #
-# Toolbox for use in our Warehouse Manager program; contains methods that could work for Product, Category, or Location classes.
+# Toolbox for use in our Warehouse Manager program; contains instance methods that could work for Product, Category, or Location instantiations.
 #
 # Public Methods:
 # #search_table_by_value
 # #save
 
 
-module WarehouseManager
+module WarehouseManagerIM
   
   
-  #CREATES NEW ROW
-  def insert
-    DATABASE.execute("INSERT INTO products (name, description, quantity, serial_num) VALUES ('#{@name}', '#{@description}', #{@quantity}, #{@serial_num})")
-    @id = DATABASE.last_insert_row_id
-  end
-  
-  
-  # WORK ON NEXT
-  
-  def self.find(record_id)
-  end
-  
-  def self.select_all_products
-    DATABASE.execute("SELECT * FROM products")
-  end
+  # #CREATES NEW ROW
+  # def insert
+  #   DATABASE.execute("INSERT INTO products (name, description, quantity, serial_num) VALUES ('#{@name}', '#{@description}', #{@quantity}, #{@serial_num})")
+  #   @id = DATABASE.last_insert_row_id
+  # end
+  #
+  #
+  # def self.select_all_products
+  #   DATABASE.execute("SELECT * FROM products")
+  # end
+  #
+  # def delete #--> be able to delete location, product or category
+  # end
   
   # Public: #search_table_by_value
   # Allows a person to search a specific table column by its value.
