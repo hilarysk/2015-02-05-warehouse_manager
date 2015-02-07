@@ -12,12 +12,9 @@ require_relative 'class_module.rb'
 # @description   - String: Description of category
 #
 # attr_reader :id
-# attr_accessor :description, :name
+# attr_accessor :description, :name, :product_id
 #
 # Public Methods:
-# #self.select_all_categories
-# #select_products_for_category
-# #add_product_to_category
 # 
 # Private Methods:
 # #initialize
@@ -27,7 +24,7 @@ class Category
   extend WarehouseManagerCM
 
   attr_reader :id
-  attr_accessor :description, :name
+  attr_accessor :description, :name, :product_id
   
   # Private: initialize
   # Starts and then plays the game with the provided players.
@@ -47,6 +44,7 @@ class Category
   def initialize(options)
     @name = options["name"]
     @description = options["description"]
+    @product_id = options["product_id"]
   end
   
   

@@ -11,10 +11,9 @@ require_relative 'class_module.rb'
 # @description   - String: Description of location
 #
 # attr_reader :id
-# attr_accessor :description, :name
+# attr_accessor :description, :name, :product_id
 #
 # Public Methods:
-# #self.select_all_locations
 # 
 # Private Methods:
 # #initialize
@@ -24,7 +23,7 @@ class Location
   extend WarehouseManagerCM
   
   attr_reader :id
-  attr_accessor :description, :name
+  attr_accessor :description, :name, :product_id
   
   # Private: initialize
   # Starts and then plays the game with the provided players.
@@ -46,6 +45,7 @@ class Location
     @name = options["name"]
     @description = options["description"]
     @id = options["id"]
+    @product_id = options["product_id"]
   end
   
   

@@ -47,10 +47,6 @@ module WarehouseManagerIM
     end
   end
   
-  #----------------TWO MORE SEARCH METHODS: SEARCH IN A SPECIFIC COLUMN/FIELD, SEARCH ALL IN A SPECIFIC TABLE-----
-  
-  
-  
   # Public: #save
   # Updates a specific record with changes made
   #

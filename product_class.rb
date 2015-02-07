@@ -14,13 +14,9 @@ require_relative 'class_module.rb'
 # @cost          - Integer: Number of cents product costs
 #
 # attr_reader :id
-# attr_accessor :serial_num, :description, :quantity, :name
+# attr_accessor :serial_num, :description, :quantity, :name, :category_id, :location_id
 #
 # Public Methods:
-# #move_self_between_locations -- instance method
-# #select_all_products_for_location
-# #return_category
-# #return_location
 # 
 # Private Methods:
 # #initialize
@@ -31,7 +27,8 @@ class Product
 
   
   attr_reader :id
-  attr_accessor :serial_num, :description, :quantity, :name, :cost
+  attr_accessor :serial_num, :description, :quantity, :name, :cost, :category_id, :location_id
+
 
   # Private: initialize
   # Starts and then plays the game with the provided players.
@@ -58,11 +55,14 @@ class Product
     @serial_num = options["serial_num"]
     @id = options["id"]
     @cost = options["cost"]
+    @category_id = options["category_id"]
+    @location_id = options["location_id"]
   end
   
   
   def insert
-    DATABASE.execute("INSERT INTO products (name, description, quantity, serial_num, cost) VALUES ('#{@name}', '#{@description}', #{@quantity}, #{@serial_num}, #{@cost})")
+    DATABASE.execute("INSERT INTO products (name, description, quantity, serial_num, cost, category_id, location_id) VALUES 
+                    ('#{@name}', '#{@description}', #{@quantity}, #{@serial_num}, #{@cost}, #{@category_id}, #{@location_id})")
     @id = DATABASE.last_insert_row_id
   end
 

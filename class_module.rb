@@ -6,22 +6,13 @@
 # #find_record_id
 # #find
 # #exterminate
+# #select_all
+# #delete_secondary_kvpairs
+# #delete_record
 
 
 module WarehouseManagerCM  
-
-  def select_all(options)
-    table = options["table"]
-    DATABASE.execute("SELECT * FROM #{table}")
-  end
   
-  
-  def delete_second_version_of_key_value_pairs_in_returned_hash
-    hashes.delete_if do |key, value|
-      key.is_a?(Integer)
-    end
-  end
-
   # Public: #find_record_id
   # Allows a person to find the id for a specific row/rows
   #
@@ -30,10 +21,13 @@ module WarehouseManagerCM
   #           - field      - field: The column where the value in question resides
   #           - table      - table: The specific database table we're searching
   #           - value      - value: The value that identified the specific record/s             
-  #             
+  #       
   #
   # Returns:
   # The requested id/s
+  #
+  # State changes:
+  # Sets @id_array and @record_id
 
   def find_record_id(options)
     table = options["table"]
@@ -47,17 +41,13 @@ module WarehouseManagerCM
     end
     
     value_array = []
-    
+        
     if @id_array.length > 1
-      @id_array.each do |hashes|
-        hashes.delete_if do |key, value|
-          key.is_a?(Integer) 
-        end
-        hashes.each do |key, value|
+      delete_secondary_kvpairs(@id_array, :hashes)
+        :hashes.each do |key, value|
           value_array << value
           @record_id = value_array
         end
-      end
     else
       @record_id = @id_array[0][0].to_s
     end
@@ -65,54 +55,131 @@ module WarehouseManagerCM
     return @record_id
   end 
 
+
+  #--------------------------------WORKING ON THESE; THE THEORY IS SOUND, BUT FOR SOME REASON OUR #SAVE AND #INSERT METHODS AREN'T WORKING ANYMORE. THINKING WE SHOULD DO THE ANDREW METHOD OF REMOVING THE NEW STUFF WE ADDED TO THE METHODS AND THEN ADDING THEM BACK IN ONE AT A TIME.
+  
+  def return_category(record_id=nil)
+    
+    if record_id == nil# if no option is included for record_id in hash 
+      record_id = @record_id
+    end
+    
+    category_id = DATABASE.execute("SELECT category_id FROM products WHERE id = #{record_id}")
+    category_name = DATABASE.execute("SELECT name FROM categories WHERE id = #{category_id}")
+    
+    return category_name
+  end
+  
+  #----------------------THIS ONE TOO-------------------------------------------------
+  
+  def return_location(record_id=nil)
+    
+    if record_id == nil# if no option is included for record_id in hash 
+      record_id = @record_id
+    end
+    
+    location_id = DATABASE.execute("SELECT location_id FROM products WHERE id = #{record_id}")
+    location_name = DATABASE.execute("SELECT name FROM locations WHERE id = #{location_id}")
+    
+    return location_name
+  end
+  
+ 
+  
+  
+  
+  # Public: #select_all
+  # Selects all data from specified table 
+  #
+  # Parameters:
+  # options - hash
+  #           - table - table you want information for (wouldn't work unless in options hash)
+  #
+  # Returns:
+  # Array containing table information
+
+  def select_all(options)
+    table = options["table"]
+    results = DATABASE.execute("SELECT * FROM #{table}")
+    return delete_secondary_kvpairs(results, :placeholder) # delete_secondary_kvpairs(results)
+  end
+  
+  # Public: #delete_secondary_kvpairs
+  # Gets rid of the safeguard key-value pairs that SQLite auto includes where the key is an integer 
+  #
+  # Parameters:
+  # array_name  - Name of array on which method is being run
+  # placeholder - Placeholder text for loop             
+  #
+  # Returns:
+  # The updated array (minus gratuitous key-value pairs)
+  
+  
+  def delete_secondary_kvpairs(array_name, placeholder)    
+    array_name.each do |placeholder|
+      placeholder.delete_if do |key, value|
+        key.is_a?(Integer)
+      end
+    end
+    
+    return array_name
+    
+  end
+
   # Public: #find
   # Pulls a specific row or rows given the row's ID (primary key) pulled from #find_record_id or provided by argument
   #
   # Parameters:
   # options - Hash
-  #           - @record_id - id: the id/s for the item/s in question
-  #           - table      - table: The specific database table we're searching
-  #           - class_name - class_name: The class on which the method is being called to create a new instantiation
-  #             
-  #             
+  #           - record_id - id: the id/s for the item/s in question
+  #           - table      - table: The specific database table we're searching             
   #
   # Returns:
-  # An array of the object/objects asked for
+  # An array of hashes representing the records asked for
+  # 
+  # State changes:
+  # Sets @better_results
  
   #need to update in case of multiple IDs
     
   def find(options)
     table = options["table"]
-    class_name = options["class_name"]
     record_id = options["record_id"] 
     
     if record_id == nil# if no option is included for record_id in hash 
     
       if @record_id.is_a?(Array)
         record_id = @record_id.join(" OR id = ")
-        @results = DATABASE.execute("SELECT * FROM #{table} WHERE id = #{record_id}")
+        results = DATABASE.execute("SELECT * FROM #{table} WHERE id = #{record_id}")
       else
         record_id = @record_id
-        @results = DATABASE.execute("SELECT * FROM #{table} WHERE id = #{record_id}")
+        results = DATABASE.execute("SELECT * FROM #{table} WHERE id = #{record_id}")
       end
       
-      @results = DATABASE.execute("SELECT * FROM #{table} WHERE id = #{record_id}")
+      results = DATABASE.execute("SELECT * FROM #{table} WHERE id = #{record_id}")
     
     else
-      @results = DATABASE.execute("SELECT * FROM #{table} WHERE id = #{record_id}")
+      results = DATABASE.execute("SELECT * FROM #{table} WHERE id = #{record_id}")
     end
-    @better_results = @results.each do |hashes|
-                      hashes.delete_if do |key, value|
-                        key.is_a?(Integer) 
-                      end
-                    end
+    @better_results = delete_secondary_kvpairs(results, :hashes)
+    
     return @better_results #returns an array
   end
 
+  # Public: #find_results_to_objects
+  # Transforms #find results into array of objects
+  #
+  # Parameters:
+  # class_name - Name of class with which to instantiate new object/s     
+  #
+  # Returns:
+  # Array of the object/s
+  #
+  # State changes:
+  # Sets @object
 
 
-
-  def transform_results_from_find_method_into_objects(class_name)
+  def find_results_to_objects(class_name)
 
      object_array = []
 
@@ -128,23 +195,24 @@ module WarehouseManagerCM
     
     return @object
   end
+
+  # Public: #delete_record
+  # Deletes record (row) from specific table given specificed id number. We're making them enter id number so that they don't accidentally run it with value stored in @record_id
+  #
+  # Parameters:
+  # options - hash
+  #           - table: table where record resides   
+  #           - record_id: id number for specific record
+  #
+  # Returns:
+  # Empty array
   
-  
-
-
-
-
-  
-  def delete_record
-    #--delete an entire row from a table - just pull in id from find_record_id and then run the delete command on it
+  def delete_record(options)
+    table = options["table"]
+    record_id = options["record_id"] 
+    
+    DATABASE.execute("DELETE FROM #{table} WHERE id = #{record_id}")
   end
-  
-  
-  
-  
-  
-  
-  
   
   # Public: #exterminate
   # Permanently deletes a table
