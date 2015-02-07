@@ -40,7 +40,11 @@ module WarehouseManagerCM
     field = options["field"]
     value = options["value"]
     
-    @id_array = DATABASE.execute("SELECT id FROM #{table} WHERE #{field} = #{value}")
+    if value.is_a?(Integer)
+      @id_array = DATABASE.execute("SELECT id FROM #{table} WHERE #{field} = #{value}")
+    else
+      @id_array = DATABASE.execute("SELECT id FROM #{table} WHERE #{field} = '#{value}'")
+    end
     
     value_array = []
     
@@ -112,13 +116,13 @@ module WarehouseManagerCM
 
      object_array = []
 
-    if @better_results.length > 2  # if [{"name"=>"fish", "cost"=>10000}, {"name"=>"dog", "cost"=>10000}]
+    if @better_results.length >= 2  # if [{"name"=>"fish", "cost"=>10000}, {"name"=>"dog", "cost"=>10000}]
       @better_results.each do |hash|
         object_array.push(class_name.new(hash))
         @object = object_array
       end
     else
-      record_details = @results[0] # Hash of the row's details.
+      record_details = @better_results[0] # Hash of the row's details.
       @object = class_name.new(record_details) # Makes object
     end
     
