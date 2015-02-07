@@ -49,4 +49,10 @@ class Location
   end
   
   
+  def insert
+    DATABASE.execute("INSERT INTO locations (name, description) VALUES ('#{@name}', '#{@description}')")
+    @id = DATABASE.last_insert_row_id
+  end
+  
+  
 end

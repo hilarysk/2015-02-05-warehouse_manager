@@ -60,6 +60,11 @@ class Product
     @cost = options["cost"]
   end
   
+  
+  def insert
+    DATABASE.execute("INSERT INTO products (name, description, quantity, serial_num, cost) VALUES ('#{@name}', '#{@description}', #{@quantity}, #{@serial_num}, #{@cost})")
+    @id = DATABASE.last_insert_row_id
+  end
 
     
 end

@@ -21,6 +21,12 @@ DATABASE.execute("CREATE TABLE IF NOT EXISTS products (id INTEGER PRIMARY KEY, n
                                                        serial_num INTEGER, category_id INTEGER, location_id INTEGER, FOREIGN KEY(category_id) REFERENCES categories(id),
                                                        FOREIGN KEY(location_id) REFERENCES locations(id))")
                                                        
+                                                       
+                                                       
+# when get cost, make sure to multiply by 100 so that is in cents instead of dollaz
+
+
+                                                       
 # ----------------------------------------------------------------------------------------------
 
 # ^ ALL THIS WORKS BEAUTIFULLY. HERE'S STUFF WE'D LIKE TO ADD ONCE WE HAVE EVERYTHING REQUIRED WORKING PROPERLY:

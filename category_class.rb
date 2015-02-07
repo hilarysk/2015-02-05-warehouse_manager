@@ -49,4 +49,10 @@ class Category
     @description = options["description"]
   end
   
+  
+  def insert
+    DATABASE.execute("INSERT INTO categories (name, description) VALUES ('#{@name}', '#{@description}')")
+    @id = DATABASE.last_insert_row_id
+  end
+  
 end

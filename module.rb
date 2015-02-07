@@ -11,21 +11,8 @@ require "pry"
 
 module WarehouseManagerIM
   
-  
-  # #CREATES NEW ROW
-  # def insert
-  #   DATABASE.execute("INSERT INTO products (name, description, quantity, serial_num) VALUES ('#{@name}', '#{@description}', #{@quantity}, #{@serial_num})")
-  #   @id = DATABASE.last_insert_row_id
-  # end
-  #
-  #
-  # def self.select_all_products
-  #   DATABASE.execute("SELECT * FROM products")
-  # end
-  #
-  # def delete #--> be able to delete location, product or category
-  # end
-  
+ 
+
   # Public: #search_table_by_value
   # Allows a person to search a specific table column by its value.
   #
@@ -60,7 +47,7 @@ module WarehouseManagerIM
     end
   end
   
-  #----------------NEED A LOT MORE METHODS TO SEARCH, FOR EXAMPLE, FOR ALL IN A SPECIFIC COLUMN/FIELD, ALL IN A SPECIFIC TABLE-----
+  #----------------TWO MORE SEARCH METHODS: SEARCH IN A SPECIFIC COLUMN/FIELD, SEARCH ALL IN A SPECIFIC TABLE-----
   
   
   
