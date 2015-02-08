@@ -13,13 +13,120 @@
 
 module WarehouseManagerCM
   
-  ##-------------------work on this------------------------
-  
-  def select_products_for_location
-    info1_array = DATABASE.execute("SELECT products.name FROM products 
-                                  JOIN locations
-                                  ON products.location_id = locations.id")
+  # Public: #find_record_id
+  # Allows a person to find the id for a specific row/rows
+  #
+  # Parameters:
+  # options - Hash
+  #           - field      - field: The column where the value in question resides
+  #           - table      - table: The specific database table we're searching
+  #           - value      - value: The value that identified the specific record/s             
+  #       
+  #
+  # Returns:
+  # The requested id/s
+  #
+  # State changes:
+  # Sets @id_array and @record_id
+
+  def find_record_id(options)
+    table = options["table"]
+    field = options["field"]
+    value = options["value"]
+    
+    if value.is_a?(Integer)
+      @id_array = DATABASE.execute("SELECT id FROM #{table} WHERE #{field} = #{value}")
+    else
+      @id_array = DATABASE.execute("SELECT id FROM #{table} WHERE #{field} = '#{value}'")
+    end
+    
+    value_array = []
+        
+    if @id_array.length > 1
+      delete_secondary_kvpairs(@id_array, :hashes)
+        :hashes.each do |key, value|
+          value_array << value
+          @record_id = value_array
+        end
+    else
+      @record_id = @id_array[0][0].to_s
+    end
+
+    return @record_id
   end 
+  
+  # Public: #select_products_for_location
+  # Allows a person to find the products in a given location
+  #
+  # Parameters:
+  # record_id            
+  #       
+  #
+  # Returns:
+  # A list of the products from that location
+  #
+  # State changes:
+  # Sets @location_value_array
+  
+  def select_products_for_location(record_id)
+    
+    # if record_id == nil# if no option is included for record_id in hash
+    #   record_id = @record_id
+    # end
+    array = DATABASE.execute("SELECT * FROM products WHERE location_id = #{record_id}")
+    
+    @location_value_array = []
+    array.each do |hash|
+      hash.delete_if do |key, value|
+        key.is_a?(Integer)
+      end
+      hash.delete_if do |key, value|
+        key.include?("i") || key.include?("t")
+      end
+      hash.each do |key, value|
+        @location_value_array << value
+      end
+    end
+    
+    return @location_value_array.join(", ")
+  end
+
+
+  # Public: #select_products_for_category
+  # Allows a person to find the products in a given category
+  #
+  # Parameters:
+  # record_id            
+  #       
+  #
+  # Returns:
+  # A list of the products from that category
+  #
+  # State changes:
+  # Sets @category_value_array
+
+  def select_products_for_category(record_id)
+    
+    # if record_id == nil# if no option is included for record_id in hash
+    #   record_id = @record_id
+    # end
+    array = DATABASE.execute("SELECT * FROM products WHERE category_id = #{record_id}")
+    
+    @category_value_array = []
+    array.each do |hash|
+      hash.delete_if do |key, value|
+        key.is_a?(Integer)
+      end
+      hash.delete_if do |key, value|
+        key.include?("i") || key.include?("t")
+      end
+      hash.each do |key, value|
+        @category_value_array << value
+      end
+    end
+    
+    return @category_value_array.join(", ")
+  end
   
   
   # Public: #locate_all_product_info
@@ -29,10 +136,10 @@ module WarehouseManagerCM
   # None            
   #       
   # Returns:
-  # The requested id/s
+  # Formatted text containing the information.
   #
   # State changes:
-  # Sets @id_array and @record_id
+  # Sets info1_array2
   
   def locate_all_product_info_location
 
@@ -83,73 +190,21 @@ module WarehouseManagerCM
  #
  #    # Category: #{@cat_value}"
   end
-
-
-
-
-  #
   
-  #------------------------------------------------------------------------------------------------------------------------------
-  
-  
-  # Public: #find_record_id
-  # Allows a person to find the id for a specific row/rows
-  #
-  # Parameters:
-  # options - Hash
-  #           - field      - field: The column where the value in question resides
-  #           - table      - table: The specific database table we're searching
-  #           - value      - value: The value that identified the specific record/s             
-  #       
-  #
-  # Returns:
-  # The requested id/s
-  #
-  # State changes:
-  # Sets @id_array and @record_id
-
-  def find_record_id(options)
-    table = options["table"]
-    field = options["field"]
-    value = options["value"]
-    
-    if value.is_a?(Integer)
-      @id_array = DATABASE.execute("SELECT id FROM #{table} WHERE #{field} = #{value}")
-    else
-      @id_array = DATABASE.execute("SELECT id FROM #{table} WHERE #{field} = '#{value}'")
-    end
-    
-    value_array = []
-        
-    if @id_array.length > 1
-      delete_secondary_kvpairs(@id_array, :hashes)
-        :hashes.each do |key, value|
-          value_array << value
-          @record_id = value_array
-        end
-    else
-      @record_id = @id_array[0][0].to_s
-    end
-
-    return @record_id
-  end 
 
   #-----------------------------------------------------------------------------------------------------
-  # Public: #find_record_id
-  # Allows a person to find the id for a specific row/rows
+  # Public: #return_category
+  # Returns the category name for a specific product.
   #
   # Parameters:
-  # options - Hash
-  #           - field      - field: The column where the value in question resides
-  #           - table      - table: The specific database table we're searching
-  #           - value      - value: The value that identified the specific record/s             
+  # record_id            
   #       
   #
   # Returns:
-  # The requested id/s
+  # The category name
   #
   # State changes:
-  # Sets @id_array and @record_id
+  # Sets @temp_cateory_id name and category_id
 
   def return_category(record_id=nil)
     
@@ -181,8 +236,19 @@ module WarehouseManagerCM
     
   end
   
-  #----------------------THIS ONE TOO-------------------------------------------------
-  
+
+  # Public: #return_location
+  # Returns the location name for a specific product.
+  #
+  # Parameters:
+  # record_id            
+  #       
+  #
+  # Returns:
+  # The category name
+  #
+  # State changes:
+  # Sets @temp_location_id name and category_id
   
   def return_location(record_id=nil)
     
@@ -208,7 +274,6 @@ module WarehouseManagerCM
       @temp_location_name = y
       return @temp_location_name
     end
-    
 
     return @temp_location_name
     
