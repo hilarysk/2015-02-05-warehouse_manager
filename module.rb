@@ -52,14 +52,16 @@ module WarehouseManagerIM
   #
   # Parameters:
   # options - Hash
-  #           - table - Table: The table in which the record resides
+  #           - table   - The table in which the record resides
+  #           - item_id - Exisiting ID for the record we want to update
   #             
   # Returns:
   # An empty array                                                               
                                                                                  
   def save(options)                                                              
     table = options["table"]                                                     
-    attributes = []                                                              
+    attributes = []
+    item_id = options["item_id"]
                                                                                  
     instance_variables.each do |i|                                               
       attributes << i.to_s.delete("@")                                           
@@ -75,12 +77,14 @@ module WarehouseManagerIM
       else                                                                       
         query_components_array << "#{a} = '#{value}'"                            
       end                                                                        
-    end                                                                          
-                                                                                 
-    query_string = query_components_array.join(", ")                             
-                                                                                 
-                                                                                 
-    DATABASE.execute("UPDATE #{table} SET #{query_string} WHERE id = #{id}")     
+    end         
+    
+    query_components_array.shift                                                         
+    
+    query_string = query_components_array.join(", ")
+
+
+    DATABASE.execute("UPDATE #{table} SET #{query_string} WHERE id = #{item_id}")
                                                                                  
   end
   

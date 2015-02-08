@@ -42,6 +42,7 @@ class Category
   # Sets instance variables @name, @description, @id     
 
   def initialize(options)
+    @id = options["id"]
     @name = options["name"]
     @description = options["description"]
     @product_id = options["product_id"]

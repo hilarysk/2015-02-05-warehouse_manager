@@ -42,9 +42,9 @@ class Location
                                
   
   def initialize(options)
+    @id = options["id"]
     @name = options["name"]
     @description = options["description"]
-    @id = options["id"]
     @product_id = options["product_id"]
   end
   

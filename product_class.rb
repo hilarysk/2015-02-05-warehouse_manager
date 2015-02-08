@@ -49,11 +49,11 @@ class Product
   # Sets instance variables @name, @quantity, @description, @serial_num, @id     
                                
   def initialize(options)
+    @id = options["id"]
     @name = options["name"]
     @quantity = options["quantity"]
     @description = options["description"]
     @serial_num = options["serial_num"]
-    @id = options["id"]
     @cost = options["cost"]
     @category_id = options["category_id"]
     @location_id = options["location_id"]

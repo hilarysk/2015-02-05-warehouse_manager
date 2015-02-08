@@ -5,19 +5,7 @@ require_relative 'product_class.rb'
 require_relative 'location_class.rb'
 require_relative 'category_class.rb'
 
-#------------------------- METHODS LEFT TO MAKE: ---------------------------------------
 
-#Product class (?)
-#move_self_between_locations -- instance method
-#select_all_products_for_location
-
-#Location class (?)
-#self.select_all_locations
-
-#Category class (?)
-# self.select_all_categories
-# select_products_for_category
-# add_product_to_category
 
 
 #----------------TWO MORE SEARCH METHODS: SEARCH IN A SPECIFIC COLUMN/FIELD, SEARCH ALL IN A SPECIFIC TABLE (will take care of self.-select_all_locations and self.select_all_categories)-----

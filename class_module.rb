@@ -5,13 +5,51 @@
 # Public Methods:
 # #find_record_id
 # #find
+# #find_results_to_objects
 # #exterminate
 # #select_all
 # #delete_secondary_kvpairs
 # #delete_record
+# #select_all_names_table
+# #select_products_for_location
+# #select_products_for_category
+# #return_category
+# #delete_secondary_kvpairs
 
 
 module WarehouseManagerCM
+  
+
+  
+  # Public: #select_all_names_table
+  # Allows a person to find the names of all the items listed for a specific table.
+  #
+  # Parameters:
+  # table - name of table being searched           
+  #       
+  #
+  # Returns:
+  # The products from the table that were requested
+  #
+  # State changes:
+  # Sets the @name_array
+  
+  def select_all_names_table(table) 
+    array = DATABASE.execute("SELECT name FROM #{table}")
+    @name_array = []
+    array.each do |hash|
+      hash.delete_if do |key, value|
+        key.is_a?(Integer)
+      end
+      hash.each do |key, value|
+        @name_array << value
+      end
+    end
+    
+    return @name_array.join(", ")
+  end
+  
+  
   
   # Public: #find_record_id
   # Allows a person to find the id for a specific row/rows
