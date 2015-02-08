@@ -55,33 +55,33 @@ module WarehouseManagerIM
   #           - table - Table: The table in which the record resides
   #             
   # Returns:
-  # An empty array  
-  
-  def save(options)
-    table = options["table"]
-    attributes = []
-    
-    instance_variables.each do |i|
-      attributes << i.to_s.delete("@")
-    end
-    
-    query_components_array = []
-  
-    attributes.each do |a|
-      value = self.send(a)
-    
-      if value.is_a?(Integer)
-        query_components_array << "#{a} = #{value}"
-      else
-        query_components_array << "#{a} = '#{value}'"
-      end
-    end
-    
-    query_string = query_components_array.join(", ")
-
-    
-    DATABASE.execute("UPDATE #{table} SET #{query_string} WHERE id = #{id}")
-  
+  # An empty array                                                               
+                                                                                 
+  def save(options)                                                              
+    table = options["table"]                                                     
+    attributes = []                                                              
+                                                                                 
+    instance_variables.each do |i|                                               
+      attributes << i.to_s.delete("@")                                           
+    end                                                                          
+                                                                                 
+    query_components_array = []                                                  
+                                                                                 
+    attributes.each do |a|                                                       
+      value = self.send(a)                                                       
+                                                                                 
+      if value.is_a?(Integer)                                                    
+        query_components_array << "#{a} = #{value}"                              
+      else                                                                       
+        query_components_array << "#{a} = '#{value}'"                            
+      end                                                                        
+    end                                                                          
+                                                                                 
+    query_string = query_components_array.join(", ")                             
+                                                                                 
+                                                                                 
+    DATABASE.execute("UPDATE #{table} SET #{query_string} WHERE id = #{id}")     
+                                                                                 
   end
   
   
