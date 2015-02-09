@@ -20,6 +20,12 @@
 module WarehouseManagerCM
   
 
+                                def return_tables_for_database
+                                  tables_array = DATABASE.execute(".tables")
+                                  return tables_array
+                                end
+
+
   
   # Public: #select_all_names_table
   # Allows a person to find the names of all the items listed for a specific table.
@@ -34,7 +40,7 @@ module WarehouseManagerCM
   # State changes:
   # Sets the @name_array
   
-  def select_all_names_table(table) 
+  def select_all_names_table(table)
     array = DATABASE.execute("SELECT name FROM #{table}")
     @name_array = []
     array.each do |hash|
@@ -79,18 +85,25 @@ module WarehouseManagerCM
     end
     
     value_array = []
-        
-    if @id_array.length > 1
-      delete_secondary_kvpairs(@id_array, :hashes)
-        :hashes.each do |key, value|
-          value_array << value
-          @record_id = value_array
-        end
-    else
-      @record_id = @id_array[0][0].to_s
-    end
 
-    return @record_id
+    if @id_array == []
+      return "Sorry, no #{table} matched your search."
+    else
+      if @id_array.length > 1
+        @id_array.each do |placeholder|
+          placeholder.delete_if do |key, value|
+            key.is_a?(Integer)
+          end
+          placeholder.each do |key, value|
+            value_array << value
+            @record_id = value_array
+          end
+        end
+      else
+        @record_id = @id_array[0][0].to_s
+      end
+      return @record_id
+    end
   end 
   
   # Public: #select_products_for_location
@@ -107,26 +120,27 @@ module WarehouseManagerCM
   # Sets @location_value_array
   
   def select_products_for_location(record_id)
-    
-    # if record_id == nil# if no option is included for record_id in hash
-    #   record_id = @record_id
-    # end
+
     array = DATABASE.execute("SELECT * FROM products WHERE location_id = #{record_id}")
     
-    @location_value_array = []
-    array.each do |hash|
-      hash.delete_if do |key, value|
-        key.is_a?(Integer)
+    if array == []
+      return "Sorry, no products matched your search."
+    else
+      @location_value_array = []
+      array.each do |hash|
+        hash.delete_if do |key, value|
+          key.is_a?(Integer)
+        end
+        hash.delete_if do |key, value|
+          key.include?("i") || key.include?("t")
+        end
+        hash.each do |key, value|
+          @location_value_array << value
+        end
       end
-      hash.delete_if do |key, value|
-        key.include?("i") || key.include?("t")
-      end
-      hash.each do |key, value|
-        @location_value_array << value
-      end
+      return @location_value_array.join(", ")
     end
     
-    return @location_value_array.join(", ")
   end
 
 
@@ -144,26 +158,28 @@ module WarehouseManagerCM
   # Sets @category_value_array
 
   def select_products_for_category(record_id)
-    
-    # if record_id == nil# if no option is included for record_id in hash
-    #   record_id = @record_id
-    # end
+
     array = DATABASE.execute("SELECT * FROM products WHERE category_id = #{record_id}")
     
-    @category_value_array = []
-    array.each do |hash|
-      hash.delete_if do |key, value|
-        key.is_a?(Integer)
+    if array == []
+      return "Sorry, no products matched your search."
+    else
+      @category_value_array = []
+      array.each do |hash|
+        hash.delete_if do |key, value|
+          key.is_a?(Integer)
+        end
+        hash.delete_if do |key, value|
+          key.include?("i") || key.include?("t")
+        end
+        hash.each do |key, value|
+          @category_value_array << value
+        end
       end
-      hash.delete_if do |key, value|
-        key.include?("i") || key.include?("t")
-      end
-      hash.each do |key, value|
-        @category_value_array << value
-      end
+      
+      return @category_value_array.join(", ")
     end
-    
-    return @category_value_array.join(", ")
+
   end
   
   
@@ -208,29 +224,8 @@ module WarehouseManagerCM
     end
 
     return @info1_array2.join("; ")
-
-
-    # info2_array = DATABASE.execute("SELECT categories.name FROM products JOIN categories
- #                                        ON products.category_id = categories.id")
- #
- #
- #
- #    @cat_values_array = []
- #
- #    info2_array.each do |hash|
- #      hash.delete_if do |key, value|
- #        key.is_a?(String)
- #      end
- #      hash.each do |key, value|
- #        @cat_values_array << value  # ==> ["board games", "90s-00s toys"]
- #      end
- #    end
- #
- #    # Category: #{@cat_value}"
   end
   
-
-  #-----------------------------------------------------------------------------------------------------
   # Public: #return_category
   # Returns the category name for a specific product.
   #
@@ -244,79 +239,200 @@ module WarehouseManagerCM
   # State changes:
   # Sets @temp_cateory_id name and category_id
 
-  def return_category(record_id=nil)
-    
-    if record_id == nil# if no option is included for record_id in hash 
-      record_id = @record_id
-    end
+  def return_category_id(record_id=nil)
+   
+     if record_id == nil# if no option is included for record_id in hash 
+       record_id = @record_id
+     end
+ 
+     category_id_array = DATABASE.execute("SELECT category_id FROM products WHERE id = #{record_id}") 
+     
+     if array == []
+       return "Sorry, we couldn't find an id that matched that category."
+     
+     else
+       delete_secondary_kvpairs(category_id_array, :placeholder)
+
+       category_id_hash = category_id_array[0]
+
+       category_id_hash.each do |x, y|
+         @temp_category_id = y
+       end
+       return @temp_category_id
+     end
+   end
+ 
+   # Public: #return_category_name
+   # Allows a person to find the name of a category given the category's id
+   #
+   # Parameters:
+   # category_id          
+   #       
+   #
+   # Returns:
+   # The category's name
+   #
+   # State changes:
+   # Sets @temp_category_name, @temp_category_id
+ 
+ 
+   def return_category_name(category_id=nil)
+   
+     if category_id == nil# if no option is included for record_id in hash 
+       category_id = @temp_category_id
+     end
+
+     category_name_array = DATABASE.execute("SELECT name FROM categories WHERE id = #{@temp_category_id}") 
+     
+     if array == []
+       return "Sorry, no categories matched your search."
+     else
+       delete_secondary_kvpairs(category_name_array, :placeholder)
+       category_name_hash = category_name_array[0]
+
+       category_name_hash.each do |x, y|
+         @temp_category_name = y
+         return @temp_category_name
+       end
+
+       return @temp_category_name
+     end
+   
+   end
+   
+   # Public: #return_all_location_names
+   # Returns names of all locations
+   #
+   # Parameters:
+   # None
+   #
+   # Returns:
+   # Names of the locations
+   #
+   # State changes:
+   # Sets @temp_location_name
+   
+   def return_all_location_names
+     array = DATABASE.execute("SELECT name FROM locations")
+     @temp_location_name = []
+     
+      array.each do |placeholder|
+         placeholder.delete_if do |key, value|
+           key.is_a?(Integer)
+         end
+         placeholder.each do |x, y|
+         @temp_location_name << y
+         end
+       end
+
+       return @temp_location_name.join(", ")
+     
+   end
   
-    category_id_array = DATABASE.execute("SELECT category_id FROM products WHERE id = #{record_id}") #==> [{"category_id"=>1, 0=>1}]
 
-    delete_secondary_kvpairs(category_id_array, :placeholder)
-
-    category_id_hash = category_id_array[0]
-
-    category_id_hash.each do |x, y|
-      @temp_category_id = y
-    end
-
-    category_name_array = DATABASE.execute("SELECT name FROM categories WHERE id = #{@temp_category_id}") #==> [{"name"=>"board games", 0=>"board games"}]
-    delete_secondary_kvpairs(category_name_array, :placeholder)
-    category_name_hash = category_name_array[0]
-
-    category_name_hash.each do |x, y|
-      @temp_category_name = y
-      return @temp_category_name
-    end
-    
-
-    return @temp_category_name
-    
-  end
-  
-
-  # Public: #return_location
-  # Returns the location name for a specific product.
+  # Public: #return_location_id
+  # Returns the location id for a specific product.
   #
   # Parameters:
   # record_id            
   #       
   #
   # Returns:
-  # The category name
+  # The location id
   #
   # State changes:
-  # Sets @temp_location_id name and category_id
+  # Sets @temp_location_id
   
-  def return_location(record_id=nil)
+  def return_location_id(record_id=nil)
     
     if record_id == nil# if no option is included for record_id in hash 
       record_id = @record_id
     end
   
-    location_id_array = DATABASE.execute("SELECT location_id FROM products WHERE id = #{record_id}") #==> [{"category_id"=>1, 0=>1}]
+    location_id_array = DATABASE.execute("SELECT location_id FROM products WHERE id = #{record_id}") 
+   
+    if location_id_array == []
+      return "Sorry, no #{table} matched your search."
+    else
 
-    delete_secondary_kvpairs(location_id_array, :placeholder)
+      delete_secondary_kvpairs(location_id_array, :placeholder)
 
-    location_id_hash = location_id_array[0]
+      location_id_hash = location_id_array[0]
 
-    location_id_hash.each do |x, y|
-      @temp_location_id = y
+      location_id_hash.each do |x, y|
+        @temp_location_id = y
+      end
+
+      return @temp_location_id
     end
+  end
+  
+  # Public: #return_location_name
+  # Returns the location name for a specific product.
+  #
+  # Parameters:
+  # category_id            
+  #       
+  #
+  # Returns:
+  # The location name
+  #
+  # State changes:
+  # Sets @temp_location_name
+  
+  def return_location_name(location_id=nil)
+    if location_id == nil
+      location_id = @temp_location_id
+    end
+    
+    
+    location_name_array = DATABASE.execute("SELECT name FROM locations WHERE id = #{@temp_location_id}") 
+    
+    if location_name_array == []
+      return "Sorry, no locations matched your search."
+    else
+      delete_secondary_kvpairs(location_name_array, :placeholder)
+      location_name_hash = location_name_array[0]
 
-    location_name_array = DATABASE.execute("SELECT name FROM locations WHERE id = #{@temp_location_id}") #==> [{"name"=>"board games", 0=>"board games"}]
-    delete_secondary_kvpairs(location_name_array, :placeholder)
-    location_name_hash = location_name_array[0]
+      location_name_hash.each do |x, y|
+        @temp_location_name = y
+        return @temp_location_name
+      end
 
-    location_name_hash.each do |x, y|
-      @temp_location_name = y
       return @temp_location_name
     end
-
-    return @temp_location_name
     
   end
   
+  # Public: #select_all_value_products
+  # Adds the value of each product
+  #
+  # Parameters:
+  # options - hash
+  #           - table - table you want information for (wouldn't work unless in options hash)
+  #
+  # Returns:
+  # Array containing table information
+
+  def select_all_value_products
+    results = DATABASE.execute("SELECT cost FROM products")
+    
+    @total_value = 0
+    
+    results.each do |hash|
+      hash.delete_if do |key, value|
+        key.is_a?(Integer)
+      end
+      hash.keep_if do |key, value|
+        key == "cost"
+      end
+      hash.each do |key, value|
+        @total_value += value
+      end
+    end
+    
+    return "$" + sprintf("%.02f", (@total_value * 0.01))
+  end
   
   
   # Public: #select_all
@@ -373,11 +489,11 @@ module WarehouseManagerCM
  
   #need to update in case of multiple IDs
     
-  def find(options)
+  def find(options)    # -------------- take a look at this again
     table = options["table"]
     record_id = options["record_id"] 
     
-    if record_id == nil# if no option is included for record_id in hash 
+    if record_id == nil
     
       if @record_id.is_a?(Array)
         record_id = @record_id.join(" OR id = ")
@@ -392,9 +508,31 @@ module WarehouseManagerCM
     else
       results = DATABASE.execute("SELECT * FROM #{table} WHERE id = #{record_id}")
     end
-    @better_results = delete_secondary_kvpairs(results, :hashes)
     
-    return @better_results #returns an array
+    @better_results2 = []
+
+    results.each do |hash|
+        hash.delete_if do |key, value|
+        key.is_a?(String)
+      end
+      hash.each do |key, value|
+        case
+        when key == 1
+          @better_results2 << ("ITEM: Name: " + value.to_s)
+        when key == 4
+          @better_results2 << ("Description: " + value.to_s)
+        when key == 3
+          @better_results2 << ("Cost: $" + sprintf("%.02f", (value * 0.01)).to_s)
+        when key == 2
+          @better_results2 << ("Quantity: " + value.to_s + "\n\n") # ----------> 
+        end
+        
+      end
+
+    end
+
+    return @better_results2.join("; ")
+    
   end
 
   # Public: #find_results_to_objects

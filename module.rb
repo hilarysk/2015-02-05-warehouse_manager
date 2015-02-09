@@ -89,5 +89,28 @@ module WarehouseManagerIM
   end
   
   
+  # Public: #insert
+  # Inserts a specific record into the locations or categories table
+  #
+  # Parameters:
+  # options - Hash
+  #           - table       - The table in which the record resides
+  #           - name        - Value for the name field
+  #           - description - Value for the description field
+  #             
+  # Returns:
+  # An empty array  
+  
+  
+  def insert(options)
+    table = options["table"]
+    name = options["name"]
+    description = options["description"]
+    
+    
+    DATABASE.execute("INSERT INTO #{table} (name, description) VALUES ('#{@name}', '#{@description}')")
+    @id = DATABASE.last_insert_row_id
+  end
+  
   
 end
