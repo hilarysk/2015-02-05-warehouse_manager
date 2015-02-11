@@ -1,4 +1,4 @@
-# require 'pry'
+require 'pry'
 require 'sqlite3' 
 require_relative 'module.rb'
 require_relative 'class_module' 
@@ -227,4 +227,4 @@ end
 
 
 
-# binding.pry
+binding.pry

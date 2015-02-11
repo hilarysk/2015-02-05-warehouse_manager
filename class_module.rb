@@ -1,3 +1,4 @@
+
 # Module: WarehouseManagerCM
 #
 # Toolbox for use in our Warehouse Manager program; contains class methods that could work for Product, Category, or Location classes.
@@ -226,6 +227,35 @@ module WarehouseManagerCM
     return @info1_array2.join("; ")
   end
   
+              # # Public: #select_all_names_table
+             #  # Allows a person to find the names of all the items listed for a specific table.
+             #  #
+             #  # Parameters:
+             #  # table - name of table being searched
+             #  #
+             #  #
+             #  # Returns:
+             #  # The products from the table that were requested
+             #  #
+             #  # State changes:
+             #  # Sets the @name_array
+             #
+             #  def return_all_records_table(table)
+             #    array = DATABASE.execute("SELECT * FROM #{table}")
+             #    @name_array = []
+             #    array.each do |hash|
+             #      hash.delete_if do |key, value|
+             #        key.is_a?(Integer)
+             #      end
+             #      hash.each do |key, value|
+             #        @name_array << value
+             #      end
+             #    end
+             #
+             #    return @name_array.join(", ")
+             #  end
+             #
+
   # Public: #return_category
   # Returns the category name for a specific product.
   #
@@ -238,7 +268,8 @@ module WarehouseManagerCM
   #
   # State changes:
   # Sets @temp_cateory_id name and category_id
-
+  
+  
   def return_category_id(record_id=nil)
    
      if record_id == nil# if no option is included for record_id in hash 
@@ -260,7 +291,7 @@ module WarehouseManagerCM
        end
        return @temp_category_id
      end
-   end
+  end
  
    # Public: #return_category_name
    # Allows a person to find the name of a category given the category's id
@@ -278,13 +309,13 @@ module WarehouseManagerCM
  
    def return_category_name(category_id=nil)
    
-     if category_id == nil# if no option is included for record_id in hash 
+     if category_id == nil# if no option is included for category_id
        category_id = @temp_category_id
      end
 
-     category_name_array = DATABASE.execute("SELECT name FROM categories WHERE id = #{@temp_category_id}") 
+     category_name_array = DATABASE.execute("SELECT name FROM categories WHERE id = #{category_id}") 
      
-     if array == []
+     if category_name_array == []
        return "Sorry, no categories matched your search."
      else
        delete_secondary_kvpairs(category_name_array, :placeholder)
@@ -328,7 +359,107 @@ module WarehouseManagerCM
        return @temp_location_name.join(", ")
      
    end
+   
+   # Public: #return_all_location_names_ids
+   # Returns names of all locations and their IDs
+   #
+   # Parameters:
+   # None
+   #
+   # Returns:
+   # Names and IDs of the locations
+   #
+   # State changes:
+   # Sets @temp_location_name_id
+   
+   def return_all_location_names_ids
+     array = DATABASE.execute("SELECT name, id FROM locations")
+     @temp_location_name_id = []
+     
+      array.each do |placeholder|
+       placeholder.delete_if do |key, value|
+         key.is_a?(Integer)
+       end
+       placeholder.each do |x, y|
+         if y.is_a?(String)
+           y = "Name: " + %Q["#{y}"] 
+         else
+           y = ", ID: #{y}; <br>"         # 
+         end
+         @temp_location_name_id << y
+       end
+      end
+    
+
+      return @temp_location_name_id.join("")
+     
+   end
+   
+   
+   # Public: #return_all_category_names
+   # Returns names of all categories
+   #
+   # Parameters:
+   # None
+   #
+   # Returns:
+   # Names of the categories
+   #
+   # State changes:
+   # Sets @temp_category_name
+   
+   def return_all_category_names
+     array = DATABASE.execute("SELECT name FROM categories")
+     @temp_category_name = []
+     
+      array.each do |placeholder|
+         placeholder.delete_if do |key, value|
+           key.is_a?(Integer)
+         end
+         placeholder.each do |x, y|
+         @temp_category_name << y
+         end
+       end
+
+       return @temp_category_name.join("\n")
+     
+   end
   
+   
+   # Public: #return_all_category_names_ids
+   # Returns names of all categories and their IDs
+   #
+   # Parameters:
+   # None
+   #
+   # Returns:
+   # Names and IDs of the categories
+   #
+   # State changes:
+   # Sets @temp_category_name_id
+   
+   def return_all_category_names_ids
+     array = DATABASE.execute("SELECT name, id FROM categories")
+     @temp_category_name_id = []
+     
+      array.each do |placeholder|
+       placeholder.delete_if do |key, value|
+         key.is_a?(Integer)
+       end
+       placeholder.each do |x, y|
+         if y.is_a?(String)
+           y = "Name: " + %Q["#{y}"] 
+         else
+           y = ", ID: #{y}; <br>"         # 
+         end
+         @temp_category_name_id << y
+       end
+      end
+    
+
+      return @temp_category_name_id.join("")
+     
+   end
 
   # Public: #return_location_id
   # Returns the location id for a specific product.
@@ -383,11 +514,11 @@ module WarehouseManagerCM
   def return_location_name(location_id=nil)
     if location_id == nil
       location_id = @temp_location_id
+      location_name_array = DATABASE.execute("SELECT name FROM locations WHERE id = #{@temp_location_id}") 
+    else 
+       location_name_array = DATABASE.execute("SELECT name FROM locations WHERE id = #{location_id}") 
     end
-    
-    
-    location_name_array = DATABASE.execute("SELECT name FROM locations WHERE id = #{@temp_location_id}") 
-    
+      
     if location_name_array == []
       return "Sorry, no locations matched your search."
     else
@@ -485,7 +616,7 @@ module WarehouseManagerCM
   # An array of hashes representing the records asked for
   # 
   # State changes:
-  # Sets @better_results
+  # Sets @better_results2
  
   #need to update in case of multiple IDs
     
@@ -524,7 +655,7 @@ module WarehouseManagerCM
         when key == 3
           @better_results2 << ("Cost: $" + sprintf("%.02f", (value * 0.01)).to_s)
         when key == 2
-          @better_results2 << ("Quantity: " + value.to_s + "\n\n") # ----------> 
+          @better_results2 << ("Quantity: " + value.to_s) # ----------> 
         end
         
       end
@@ -534,6 +665,37 @@ module WarehouseManagerCM
     return @better_results2.join("; ")
     
   end
+  
+  
+
+  def return_array_of_cat_record_hashes
+    results = DATABASE.execute("SELECT * FROM categories")
+    
+    results.each do |hash|
+      hash.delete_if do |key, value|
+        key.is_a?(Integer)
+      end
+    end
+    
+    return results
+  end
+  
+  def return_array_of_loc_record_hashes
+    results = DATABASE.execute("SELECT * FROM locations")
+    
+    results.each do |hash|
+      hash.delete_if do |key, value|
+        key.is_a?(Integer)
+      end
+    end
+    
+    return results
+  end
+    
+    
+    
+
+
 
   # Public: #find_results_to_objects
   # Transforms #find results into array of objects
@@ -548,21 +710,20 @@ module WarehouseManagerCM
   # Sets @object
 
 
-  def find_results_to_objects(class_name)
+  def find_results_to_objects(class_name, array_name=@better_results)
 
      object_array = []
 
-    if @better_results.length >= 2  # if [{"name"=>"fish", "cost"=>10000}, {"name"=>"dog", "cost"=>10000}]
-      @better_results.each do |hash|
+    if array_name.length >= 2  # if [{"name"=>"fish", "cost"=>10000}, {"name"=>"dog", "cost"=>10000}]
+      array_name.each do |hash|
         object_array.push(class_name.new(hash))
         @object = object_array
       end
     else
-      record_details = @better_results[0] # Hash of the row's details.
+      record_details = array_name[0] # Hash of the row's details.
       @object = class_name.new(record_details) # Makes object
     end
-    
-    return @object
+   
   end
 
   # Public: #delete_record
@@ -595,10 +756,4 @@ module WarehouseManagerCM
   def exterminate(table)
     DATABASE.execute("DROP TABLE #{table}") 
   end
-
-
-
-
-
-
 end

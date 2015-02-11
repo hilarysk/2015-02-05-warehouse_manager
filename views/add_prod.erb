@@ -1,0 +1,48 @@
+<h3>Add a new product</h3>
+<p>Please enter the new product's information below:</p>
+
+<form action="/add_prod_success">
+  
+  <p><strong>Name:</strong></p></p>
+  <input type="text" name="name">
+  <br><br>
+
+  <p><strong>Quantity:</strong></p>
+  <input type="number" name="quantity" min="1" step="1">
+  <br><br>
+  
+  <p><strong>Description: (no more than one or two sentences, please)</strong></p>
+  <input type="text" name="description">
+  <br><br>
+  
+  <p><strong>Serial number:</strong></p>
+  <input type="number" name="serial_num" min="1" step="1">
+  <br><br>
+  
+  <p><strong>Price:</strong></p>
+  <input type="text" name="cost" min="1">
+  <br><br>
+  
+  <p><strong>Category:</strong></p>
+  <p>NOTE: If there are no categories yet, you have to <a href="http://localhost:4567/new_cat">create one</a> first.</p>
+  <select name="category_id">
+  <% @all_category_info_array.each do |hash| %>
+  <option value="<%= hash["id"] %>"><%= hash["name"]%></option>
+  <% end %>
+  </select>
+  <br><br>
+  
+  <p><strong>Location:</strong></p>
+  <p>NOTE: If there are no locations yet, you have to <a href="http://localhost:4567/new_cat">create one</a> first.</p>
+  <select name="location_id">
+  <% @all_location_info_array.each do |hash| %>
+  <option value="<%= hash["id"] %>"><%= hash["name"]%></option>
+  <% end %>
+  </select>
+  
+  <br><br>
+  
+  <input type="submit" value="Submit">
+  <br><br>
+
+</form> 

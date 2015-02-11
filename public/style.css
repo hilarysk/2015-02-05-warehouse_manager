@@ -1,0 +1,33 @@
+body  {
+  font-family: Georgia;
+  font-size: medium;
+  color: #000000;
+  text-decoration: none;
+  line-height: normal;
+  border: 0px;
+  background: #FFFFFF;
+  
+}
+
+.floatright {
+  float: right;
+  padding-bottom: 5px;
+  padding-left: 10px;
+  padding-right: 3px;
+  width: 500px;
+}
+
+.floatleft {
+  float: left;
+  padding-bottom: 5px;
+  padding-left: 3px;
+  padding-right: 10px;
+  width: 300px;
+}
+
+.imglogo {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 400px; 
+}
