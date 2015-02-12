@@ -28,7 +28,7 @@ module WarehouseManagerCM
   #       
   #
   # Returns:
-  # The products from the table that were requested
+  # A formatted display of the products from the table that were requested
   #
   # State changes:
   # Sets the @name_array

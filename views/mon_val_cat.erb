@@ -3,7 +3,7 @@
 <form action="/mon_val_cat_success">
   <select name="category_id">
   <% @all_category_info_array.each do |hash| %>
-  <option value="<%= hash["id"] %>"><%= hash["name"]%></option>
+    <option value="<%= hash["id"] %>"><%= hash["name"]%></option>
   <% end %>
   </select>
   <br><br>

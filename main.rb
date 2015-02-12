@@ -20,7 +20,7 @@ get "/view_prod" do
   erb :view_prod
 end #works
 
-get "/view_prod_choice" do
+get "/view_prods_choice" do
   prod_id = params["product_id"].to_i
   
   location_id = Location.return_location_id(prod_id)
@@ -33,7 +33,7 @@ get "/view_prod_choice" do
 
   @all_prod_info = "#{prod_info};<br> <strong>Location:</strong> #{loc_name};<br> <strong>Category:</strong> #{cat_name}"
   
-  erb :view_prod_choice
+  erb :view_prods_choice
 end #works
 
 get "/add_prod" do
@@ -61,7 +61,12 @@ before "/add_prod_success" do
  end
 end # works
 
-get "/add_prod_success" do
+get "/add_prod_success" do  
+  
+  # Using the parameters collected in the form from the previous page, this creates a new                              
+  # instantiation of a Product, inserts it into the table, and then sets an instance variable                            
+  # equal to the attributes of the new Product
+  
   prod_name = params["name"].delete("'")
   serial_num = params["serial_num"].to_i
   cost = (((params["cost"].delete("$")).to_f) * 100).to_i
@@ -126,6 +131,11 @@ get "/update_prod" do
 end #works
 
 get "/update_prod_choice" do
+  
+  # This route handler autofills a form with the original information for the product that                              
+  # the use wishes to update. The user can change any value, and their changes + defaults for                            
+  # unchanged attributes are then used to create the new instantiation and save it. 
+  
   prod_id = params["product_id"]
 
   @all_category_info_array = Category.return_array_of_cat_record_hashes
@@ -431,6 +441,12 @@ get "/new_cat" do
 end #works
 
 before "/new_cat_success" do
+  
+  # This route handler checks to make sure that the name of the category the user
+  # wants to create isn't currently being used already. If it is, it sends her to 
+  # a different page and alerts her to the error; otherwise, she continues to the 
+  #success page. 
+  
   category_names = Category.return_all_category_names_unformatted
   category_names.each do |x|
    if x == params["name"]
