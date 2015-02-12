@@ -1,4 +1,4 @@
-DATABASE = SQLite3::Database.new("warehouse_manager.db")
+DATABASE = SQLite3::Database.new("/Users/hilarysk/Code/2015-02-05-warehouse-manager/database/warehouse_manager.db")
 
 DATABASE.results_as_hash = true
 
