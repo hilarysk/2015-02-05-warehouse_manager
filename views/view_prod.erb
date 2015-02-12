@@ -1,6 +1,6 @@
-<h3>Update a product's information</h3>    
-<p>Which product would you like to update?</p>
-<form action="/update_prod_choice">
+<h3>View a product's information</h3>    
+<p>Which product would you like to view?</p>
+<form action="/view_prods_choice">
   <select name="product_id">
   <% @all_products_info_array.each do |hash| %>
   <option value="<%= hash["id"] %>"><%= hash["name"]%></option>

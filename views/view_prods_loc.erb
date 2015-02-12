@@ -1,6 +1,6 @@
-<h3>Update a location's information</h3>    
-<p>What location would you like to update?</p>
-<form action="/update_loc_choice">
+<h3>View products' information</h3>    
+<p>For which location would you like to view products?</p>
+<form action="/view_prods_loc_choice">
   <select name="location_id">
   <% @all_locations_info_array.each do |hash| %>
   <option value="<%= hash["id"] %>"><%= hash["name"]%></option>

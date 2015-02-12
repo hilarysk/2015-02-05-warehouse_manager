@@ -19,13 +19,6 @@
 
 module WarehouseManagerCM
   
-
-                                def return_tables_for_database
-                                  tables_array = DATABASE.execute(".tables")
-                                  return tables_array
-                                end
-
-
   
   # Public: #select_all_names_table
   # Allows a person to find the names of all the items listed for a specific table.
@@ -195,11 +188,12 @@ module WarehouseManagerCM
   # State changes:
   # Sets info1_array2
   
-  def locate_all_product_info_location
+  def locate_all_product_info_loc_or_cat(options)
+    field = options["field"]
+    id = options["id"]
+    
 
-    info1_array = DATABASE.execute("SELECT products.name, products.description, products.cost, locations.name FROM products 
-                                    JOIN locations
-                                    ON products.location_id = locations.id")
+    info1_array = DATABASE.execute("SELECT * FROM products WHERE #{field} = #{id}")
                       
 
     @info1_array2 = []
@@ -211,19 +205,23 @@ module WarehouseManagerCM
       hash.each do |key, value|
         case
         when key == 0
-          @info1_array2 << ("ITEM: Name: " + value.to_s)
+          @info1_array2 << ("<br><br><strong>ID:</strong> #{value.to_s}")
         when key == 1
-          @info1_array2 << ("Description: " + value.to_s)
-        when key == 2
-          @info1_array2 << ("Cost: $" + sprintf("%.02f", (value * 0.01)).to_s)
+          @info1_array2 << ("<strong>Name:</strong> #{value.to_s}")
+        when key == 4
+          @info1_array2 << ("<strong>Description:</strong> \"#{value.to_s}\"")
         when key == 3
-          @info1_array2 << ("Location: " + value.to_s)
+          @info1_array2 << ("<strong>Cost:</strong> $#{(sprintf("%.02f", (value * 0.01))).to_s}")
+        when key == 2
+          @info1_array2 << ("<strong>Quantity:</strong> #{value.to_s}") 
+        when key == 5
+          @info1_array2 << ("<strong>Serial Number:</strong> #{value.to_s}")# ----------> 
         end
       end
 
     end
 
-    return @info1_array2.join("; ")
+    return @info1_array2.join(";<br>")
   end
   
               # # Public: #select_all_names_table
@@ -443,12 +441,12 @@ module WarehouseManagerCM
    def return_all_product_serial_nums_unformatted
      array = DATABASE.execute("SELECT serial_num FROM products")
      product_serial_nums = []
-      array.each do |placeholder|
-         placeholder.delete_if do |key, value|
+      array.each do |hash|
+         hash.delete_if do |key, value|
            key.is_a?(Integer)
          end
-         placeholder.each do |x, y| 
-           product_serial_nums << y
+         hash.each do |key, value| 
+           product_serial_nums << value
          end
        end
 
@@ -544,7 +542,7 @@ module WarehouseManagerCM
     location_id_array = DATABASE.execute("SELECT location_id FROM products WHERE id = #{record_id}") 
    
     if location_id_array.empty?
-      return "Sorry, no #{table} matched your search."
+      return "Sorry, no locations matched your search."
     else
 
       delete_secondary_kvpairs(location_id_array, :placeholder)
@@ -606,7 +604,7 @@ module WarehouseManagerCM
   # Returns:
   # Array containing table information
 
-  def select_all_value_products
+  def if_bought_one_of_each_item
     results = DATABASE.execute("SELECT cost FROM products")
     
     @total_value = 0
@@ -627,7 +625,55 @@ module WarehouseManagerCM
   end
   
   
+  
+  def select_all_value_products
+    results = DATABASE.execute("SELECT cost, quantity FROM products")
+
+    @total_value = 0
+
+    results.each do |hash|
+      hash.delete_if do |key, value|
+        key.is_a?(Integer)
+      end
+      hash.keep_if do |key, value|
+        key == "cost" || key == "quantity"
+      end
+    end
+    
+    results.each do |hash|
+      @total_value += (hash["cost"] * hash["quantity"])
+    end
+
+    return "$" + sprintf("%.02f", (@total_value * 0.01))
+    
+    
+  end
+  
   def select_value_products_table(field, id)
+    results = DATABASE.execute("SELECT cost, quantity FROM products WHERE #{field} = #{id}")
+    
+    @total_value = 0
+
+    results.each do |hash|
+      hash.delete_if do |key, value|
+        key.is_a?(Integer)
+      end
+      hash.keep_if do |key, value|
+        key == "cost" || key == "quantity"
+      end
+    end
+    
+    results.each do |hash|
+      @total_value += (hash["cost"] * hash["quantity"])
+    end
+
+    return "$" + sprintf("%.02f", (@total_value * 0.01))
+    
+    
+  end
+  
+  
+  def select_cost_for_product_table(field, id)
     results = DATABASE.execute("SELECT cost FROM products WHERE #{field} = #{id}")
     
     @total_value = 0
@@ -646,6 +692,7 @@ module WarehouseManagerCM
     
     return "$" + sprintf("%.02f", (@total_value * 0.01))
   end
+  
   
   # Public: #select_all
   # Selects all data from specified table 
@@ -730,24 +777,24 @@ module WarehouseManagerCM
       hash.each do |key, value|
         case
         when key == 0
-          @better_results2 << ("ID: #{value.to_s}")
+          @better_results2 << ("<strong>ID:</strong> #{value.to_s}")
         when key == 1
-          @better_results2 << ("Name: #{value.to_s}")
+          @better_results2 << ("<strong>Name:</strong> #{value.to_s}")
         when key == 4
-          @better_results2 << ("Description: \"#{value.to_s}\"")
+          @better_results2 << ("<strong>Description:</strong> \"#{value.to_s}\"")
         when key == 3
-          @better_results2 << ("Cost: $#{(sprintf("%.02f", (value * 0.01))).to_s}")
+          @better_results2 << ("<strong>Cost:</strong> $#{(sprintf("%.02f", (value * 0.01))).to_s}")
         when key == 2
-          @better_results2 << ("Quantity: #{value.to_s}") 
+          @better_results2 << ("<strong>Quantity:</strong> #{value.to_s}") 
         when key == 5
-          @better_results2 << ("Serial Number: #{value.to_s}")# ----------> 
+          @better_results2 << ("<strong>Serial Number:</strong> #{value.to_s}")# ----------> 
         end
         
       end
 
     end
 
-    return @better_results2.join("; ")
+    return @better_results2.join(";<br> ")
     
   end
   
@@ -830,8 +877,8 @@ module WarehouseManagerCM
     return results
   end
     
-  def get_product_info_hash(id)
-    array = DATABASE.execute("SELECT * FROM products WHERE id = #{id}")
+  def get_table_info_hash(table, id)
+    array = DATABASE.execute("SELECT * FROM #{table} WHERE id = #{id}")
     
     delete_secondary_kvpairs(array, :placeholder)
 

@@ -1,6 +1,6 @@
-<h3>Update a category's information</h3>    
-<p>Which category would you like to update?</p>
-<form action="/update_cat_choice">
+<h3>View product' information</h3>    
+<p>For which category would you like to view products?</p>
+<form action="/view_prods_cat_choice">
   <select name="category_id">
   <% @all_categories_info_array.each do |hash| %>
   <option value="<%= hash["id"] %>"><%= hash["name"]%></option>
@@ -12,3 +12,4 @@
   <br><br>
 
 </form>
+  

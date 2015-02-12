@@ -1,0 +1,24 @@
+<h3>Update a category's information</h3>  
+<p><strong>Oops! Looks like you tried to enter the name of an existing category. If you wanted to update that specific category, <a href="/update_cat">go here</a>. Otherwise, please enter a different name.</strong>  
+<p>Here's the current information for the category you selected:</p>
+<p<%= @cat %>
+<p>To update this information, just change whatever fields you want below, and leave the rest set to their default values.</p>
+  
+<form action="/update_cat_changes">
+    <p><strong>ID (fixed)</strong></p></p>
+    <input type="checkbox" name="id" value="<%= @id %>" checked="checked"><%= @id %>
+    
+    <p><strong>Name:</strong></p></p>
+     <p>Existing categories:</p>
+     <p><%= @category_names %></p>
+    <input type="text" name="name" value="<%= @name %>">
+    <br><br>
+  
+    <p><strong>Description: (no more than one or two sentences, please)</strong></p>
+    <input type="text" name="description" value="<%= @description %>">
+    <br><br>
+  
+    <input type="submit" value="Submit">
+    <br><br>
+
+  </form>
