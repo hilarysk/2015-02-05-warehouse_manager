@@ -1,0 +1,24 @@
+<h3>Your location has been deleted!</h3>
+<p><%= @all_deleted_loc_info %></p>
+<p><em>Remaining locations:<em></p>
+<form>
+  <select>
+  <% @all_location_info_array.each do |hash| %>
+  <option value="<%= hash["id"] %>"><%= hash["name"]%></option>
+  <% end %>
+  </select>
+</form>
+
+<p><em>Further location actions:</em><br>
+  <ul>    
+    <li><a href="/new_loc"> Add a new location</a></li>
+    
+    <li><a href="/delete_loc">Delete another existing location</a></li>
+
+    <li><a href="/update_loc">Update a location's information</a></li>
+   
+    <li><a href="/retrieve_prods_loc">Retrieve all products in a given location</a></li>
+    
+    <li><a href="/update_prod">Add products to your new location</a></li>
+  </ul>
+</p>

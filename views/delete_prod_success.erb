@@ -1,0 +1,24 @@
+<h3>Your product has been deleted!</h3>
+<p><%= @all_deleted_prod_info %></p>
+<p><em>Remaining products:</em></p>
+<form>
+  <select>
+  <% @all_product_info_array.each do |hash| %>
+  <option value="<%= hash["id"] %>"><%= hash["name"]%></option>
+  <% end %>
+  </select>
+</form>
+
+<p><em>Further product actions:</em><br>
+  <ul>    
+    <li><a href="/add_prod"> Add a new product</a></li>
+    
+    <li><a href="/delete_prod">Delete another existing product</a></li>
+
+    <li><a href="/update_prod">Update a product's information</a></li>
+   
+    <li><a href="/retrieve_prods_cat">Retrieve all products in a given category</a></li>
+    
+    <li><a href="/retrieve_prods_loc">Retrieve all products in a given location</a></li>
+  </ul>
+</p>

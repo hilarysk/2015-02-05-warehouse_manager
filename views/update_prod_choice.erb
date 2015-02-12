@@ -1,0 +1,50 @@
+<h3>Update a product's information</h3>    
+<p>Here's the current information for the product you selected:</p>
+<p<%= @prod %>
+<p>To update this information, just change whatever fields you want below, and leave the rest set to their default values (for category and location, you'll have to manually select the current location and/or category in order to keep those values).</p>
+  
+<form action="/update_prod_changes">
+    <p><strong>ID (fixed)</strong></p></p>
+    <input type="checkbox" name="id" value="<%= @id %>" checked="checked"><%= @id %>
+    
+    <p><strong>Name:</strong></p></p>
+    <input type="text" name="name" value="<%= @name %>">
+    <br><br>
+
+    <p><strong>Quantity:</strong></p>
+    <input type="text" name="quantity" value="<%= @quantity %>">
+    <br><br>
+  
+    <p><strong>Description: (no more than one or two sentences, please)</strong></p>
+    <input type="text" name="description" value="<%= @description %>">
+    <br><br>
+  
+    <p><strong>Serial number:</strong></p>
+    <input type="text" name="serial_num" value="<%= @serial_num %>">
+    <br><br>
+  
+    <p><strong>Price:</strong></p>
+    <input type="text" name="cost" value="<%= @cost %>">
+    <br><br>
+  
+    <p><strong>Category:</strong></p>
+    <select name="category_id">
+    <% @all_category_info_array.each do |hash| %>
+    <option value="<%= hash["id"] %>"><%= hash["name"]%></option>
+    <% end %>
+    </select>
+    <br><br>
+  
+    <p><strong>Location:</strong></p>
+    <select name="location_id">
+    <% @all_location_info_array.each do |hash| %>
+    <option value="<%= hash["id"] %>"><%= hash["name"]%></option>
+    <% end %>
+    </select>
+  
+    <br><br>
+  
+    <input type="submit" value="Submit">
+    <br><br>
+
+  </form>

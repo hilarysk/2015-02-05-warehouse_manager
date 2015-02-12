@@ -1,2 +1,17 @@
 <h3>Update a product's information</h3>    
-    
+<p>What product would you like to update?</p>
+<form action="/update_prod_choice">
+  <select name="product_id">
+  <% @all_product_info_array.each do |hash| %>
+  <option value="<%= hash["id"] %>"><%= hash["name"]%></option>
+  <% end %>
+  </select>
+  <br><br>
+  
+  <input type="submit" value="Submit">
+  <br><br>
+
+</form>
+  
+
+           

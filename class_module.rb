@@ -1,4 +1,3 @@
-
 # Module: WarehouseManagerCM
 #
 # Toolbox for use in our Warehouse Manager program; contains class methods that could work for Product, Category, or Location classes.
@@ -278,7 +277,7 @@ module WarehouseManagerCM
  
      category_id_array = DATABASE.execute("SELECT category_id FROM products WHERE id = #{record_id}") 
      
-     if array == []
+     if category_id_array.empty?
        return "Sorry, we couldn't find an id that matched that category."
      
      else
@@ -322,11 +321,11 @@ module WarehouseManagerCM
        category_name_hash = category_name_array[0]
 
        category_name_hash.each do |x, y|
-         @temp_category_name = y
-         return @temp_category_name
+         @temp_category_name1 = y
+         return @temp_category_name1
        end
 
-       return @temp_category_name
+       return @temp_category_name1
      end
    
    end
@@ -410,22 +409,84 @@ module WarehouseManagerCM
    
    def return_all_category_names
      array = DATABASE.execute("SELECT name FROM categories")
-     @temp_category_name = []
-     
+     category_names = []
       array.each do |placeholder|
          placeholder.delete_if do |key, value|
            key.is_a?(Integer)
          end
          placeholder.each do |x, y|
-         @temp_category_name << y
+           y = "Name: " + %Q["#{y}"] + "<br>" 
+           category_names << y
          end
        end
 
-       return @temp_category_name.join("\n")
+       return category_names.join("")
      
    end
   
+   def return_all_category_names_unformatted
+     array = DATABASE.execute("SELECT name FROM categories")
+     category_names = []
+      array.each do |placeholder|
+         placeholder.delete_if do |key, value|
+           key.is_a?(Integer)
+         end
+         placeholder.each do |x, y| 
+           category_names << y
+         end
+       end
+
+       return category_names
+     
+   end
    
+   def return_all_product_serial_nums_unformatted
+     array = DATABASE.execute("SELECT serial_num FROM products")
+     product_serial_nums = []
+      array.each do |placeholder|
+         placeholder.delete_if do |key, value|
+           key.is_a?(Integer)
+         end
+         placeholder.each do |x, y| 
+           product_serial_nums << y
+         end
+       end
+
+       return product_serial_nums
+     
+   end
+   
+   def return_all_product_names_unformatted
+     array = DATABASE.execute("SELECT name FROM products")
+     product_names = []
+      array.each do |placeholder|
+         placeholder.delete_if do |key, value|
+           key.is_a?(Integer)
+         end
+         placeholder.each do |x, y| 
+           product_names << y
+         end
+       end
+
+       return product_names
+     
+   end
+   
+   def return_all_location_names_unformatted
+     array = DATABASE.execute("SELECT name FROM locations")
+     location_names = []
+      array.each do |placeholder|
+         placeholder.delete_if do |key, value|
+           key.is_a?(Integer)
+         end
+         placeholder.each do |x, y| 
+           location_names << y
+         end
+       end
+
+       return location_names
+     
+   end
    # Public: #return_all_category_names_ids
    # Returns names of all categories and their IDs
    #
@@ -482,7 +543,7 @@ module WarehouseManagerCM
   
     location_id_array = DATABASE.execute("SELECT location_id FROM products WHERE id = #{record_id}") 
    
-    if location_id_array == []
+    if location_id_array.empty?
       return "Sorry, no #{table} matched your search."
     else
 
@@ -566,6 +627,26 @@ module WarehouseManagerCM
   end
   
   
+  def select_value_products_table(field, id)
+    results = DATABASE.execute("SELECT cost FROM products WHERE #{field} = #{id}")
+    
+    @total_value = 0
+    
+    results.each do |hash|
+      hash.delete_if do |key, value|
+        key.is_a?(Integer)
+      end
+      hash.keep_if do |key, value|
+        key == "cost"
+      end
+      hash.each do |key, value|
+        @total_value += value
+      end
+    end
+    
+    return "$" + sprintf("%.02f", (@total_value * 0.01))
+  end
+  
   # Public: #select_all
   # Selects all data from specified table 
   #
@@ -620,7 +701,7 @@ module WarehouseManagerCM
  
   #need to update in case of multiple IDs
     
-  def find(options)    # -------------- take a look at this again
+  def find(options)    # -------------- find specific record
     table = options["table"]
     record_id = options["record_id"] 
     
@@ -648,14 +729,18 @@ module WarehouseManagerCM
       end
       hash.each do |key, value|
         case
+        when key == 0
+          @better_results2 << ("ID: #{value.to_s}")
         when key == 1
-          @better_results2 << ("ITEM: Name: " + value.to_s)
+          @better_results2 << ("Name: #{value.to_s}")
         when key == 4
-          @better_results2 << ("Description: " + value.to_s)
+          @better_results2 << ("Description: \"#{value.to_s}\"")
         when key == 3
-          @better_results2 << ("Cost: $" + sprintf("%.02f", (value * 0.01)).to_s)
+          @better_results2 << ("Cost: $#{(sprintf("%.02f", (value * 0.01))).to_s}")
         when key == 2
-          @better_results2 << ("Quantity: " + value.to_s) # ----------> 
+          @better_results2 << ("Quantity: #{value.to_s}") 
+        when key == 5
+          @better_results2 << ("Serial Number: #{value.to_s}")# ----------> 
         end
         
       end
@@ -666,6 +751,47 @@ module WarehouseManagerCM
     
   end
   
+  def find_cat_or_loc(options)    # -------------- find specific record
+    table = options["table"]
+    record_id = options["record_id"] 
+    
+    if record_id == nil
+    
+      if @record_id.is_a?(Array)
+        record_id = @record_id.join(" OR id = ")
+        results = DATABASE.execute("SELECT * FROM #{table} WHERE id = #{record_id}")
+      else
+        record_id = @record_id
+        results = DATABASE.execute("SELECT * FROM #{table} WHERE id = #{record_id}")
+      end
+      
+      results = DATABASE.execute("SELECT * FROM #{table} WHERE id = #{record_id}")
+    
+    else
+      results = DATABASE.execute("SELECT * FROM #{table} WHERE id = #{record_id}")
+    end
+    
+    better_results_array = []
+
+    results.each do |hash|
+        hash.delete_if do |key, value|
+        key.is_a?(String)
+      end
+      hash.each do |key, value|
+        case
+        when key == 1
+          better_results_array << ("NAME: \"#{value.to_s}\" <br>")
+        when key == 2
+          better_results_array << ("DESCRIPTION: \"#{value.to_s}\"")
+        end
+        
+      end
+
+    end
+
+    return better_results_array.join("")
+    
+  end
   
 
   def return_array_of_cat_record_hashes
@@ -692,9 +818,25 @@ module WarehouseManagerCM
     return results
   end
     
+  def return_array_of_prod_record_hashes
+    results = DATABASE.execute("SELECT * FROM products")
     
+    results.each do |hash|
+      hash.delete_if do |key, value|
+        key.is_a?(Integer)
+      end
+    end
     
+    return results
+  end
+    
+  def get_product_info_hash(id)
+    array = DATABASE.execute("SELECT * FROM products WHERE id = #{id}")
+    
+    delete_secondary_kvpairs(array, :placeholder)
 
+    return array[0]
+  end
 
 
   # Public: #find_results_to_objects

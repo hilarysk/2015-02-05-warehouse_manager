@@ -59,9 +59,10 @@ module WarehouseManagerIM
   # An empty array                                                               
                                                                                  
   def save(options)                                                              
-    table = options["table"]                                                     
-    attributes = []
+    table = options["table"]                                            
     item_id = options["item_id"]
+    
+    attributes = []
                                                                                  
     instance_variables.each do |i|                                               
       attributes << i.to_s.delete("@")                                           

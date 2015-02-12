@@ -1,15 +1,13 @@
-<h3>Delete a location</h3>
-<p>Please select the location from the list below that you'd like to delete:</p>
-<form action="/delete_loc_success">
-  <p><strong>Location:</strong></p>
+<h3>View the monetary value of a set group of products</h3>
+<p>Please choose the location for which you'd like to see the value of products:</p>
+<form action="/mon_val_loc_success">
   <select name="location_id">
   <% @all_location_info_array.each do |hash| %>
   <option value="<%= hash["id"] %>"><%= hash["name"]%></option>
   <% end %>
   </select>
   <br><br>
-
   <input type="submit" value="Submit">
   <br><br>
-
+  
 </form>

@@ -1,2 +1,16 @@
-<h3>Delete a product</h3>    
+<h3>Delete a Product</h3>
+<p>Please select the product from the list below that you'd like to delete:</p>
+<form action="/delete_prod_success">
+  <p><strong>Product:</strong></p>
+  <select name="product_id">
+  <% @all_products_info_array.each do |hash| %>
+  <option value="<%= hash["id"] %>"><%= hash["name"]%></option>
+  <% end %>
+  </select>
+  <br><br>
+
+  <input type="submit" value="Submit">
+  <br><br>
+
+</form>
     

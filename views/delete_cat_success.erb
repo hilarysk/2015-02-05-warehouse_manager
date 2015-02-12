@@ -1,0 +1,24 @@
+<h3>Your category has been deleted!</h3>
+<p><%= @all_deleted_cat_info %></p>
+<p><em>Remaining categories:</em></p>
+<form>
+  <select>
+  <% @all_category_info_array.each do |hash| %>
+  <option value="<%= hash["id"] %>"><%= hash["name"]%></option>
+  <% end %>
+  </select>
+</form>
+
+<p><em>Further category actions:</em><br>
+  <ul>    
+    <li><a href="/new_cat"> Add a new category</a></li>
+    
+    <li><a href="/delete_cat">Delete another existing category</a></li>
+
+    <li><a href="/update_cat">Update a category's information</a></li>
+   
+    <li><a href="/retrieve_prods_cat">Retrieve all products in a given category</a></li>
+    
+    <li><a href="/update_prod">Add products to your new category</a></li>
+  </ul>
+</p>

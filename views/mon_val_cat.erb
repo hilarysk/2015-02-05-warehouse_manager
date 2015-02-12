@@ -1,0 +1,10 @@
+<h3>View the monetary value of a set group of products</h3>
+<p>Please choose the category for which you'd like to see the value of products:</p>
+<form action="/val_mon_cat_success">
+  <select name="category_id">
+  <% @all_category_info_array.each do |hash| %>
+  <option value="<%= hash["id"] %>"><%= hash["name"]%></option>
+  <% end %>
+  </select>
+  <br><br>
+</form>

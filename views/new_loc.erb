@@ -1,0 +1,19 @@
+<h3>Add a new location</h3>
+<p>Please enter the new location's information below:</p>
+
+<form action="/new_loc_success">
+  
+  <p><strong>Name:</strong></p></p>
+  <p>Existing locations:</p>
+  <p><%= @location_names %>
+  <input type="text" name="name">
+  <br><br>
+  
+  <p><strong>Description: (no more than one or two sentences, please)</strong></p>
+  <input type="text" name="description">
+  <br><br>
+  
+  <input type="submit" value="Submit">
+  <br><br>
+
+</form> 

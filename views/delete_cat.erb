@@ -1,0 +1,16 @@
+<h3>Delete a category</h3>
+<p>Please select the category from the list below that you'd like to delete:</p>
+<form action="/delete_cat_success">
+  <p><strong>Category:</strong></p>
+  <select name="category_id">
+  <% @all_category_info_array.each do |hash| %>
+  <option value="<%= hash["id"] %>"><%= hash["name"]%></option>
+  <% end %>
+  </select>
+  <br><br>
+
+  <input type="submit" value="Submit">
+  <br><br>
+
+</form>
+  
